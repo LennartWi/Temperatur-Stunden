@@ -25,16 +25,19 @@ if button:
   df = df[['timestamp', 'temperature']]
   
   hours_below_threshold = df[df['temperature'] < temperature_threshold].shape[0]
-  st.write(f"Anzahl Stunden unter {temperature_threshold} Grad: {hours_below_threshold}")
+  st.write(f"Anzahl Stunden unter {temperature_threshold}°C: {hours_below_threshold}h")
   
   st.header("Alle Stunden des Jahres")
-  # Temperatur runden auf ganze Zahl
-  df['temperature_rounded'] = df['temperature'].round().astype(int)
   st.dataframe(df)
+  # Temperatur runden auf ganze Zahl
+  df_rounded = df
+  df_rounded = df.dropna(subset=['temperature'])
+  df_rounded['temperature_rounded'] = df_rounded['temperature'].round().astype(int)
+  
 
   st.header("Anzahl der Stunden mit genannten Temperaturen")
   # Stunden pro gerundeter Temperatur zählen
-  temp_counts = df['temperature_rounded'].value_counts().sort_index()
+  temp_counts = df_rounded['temperature_rounded'].value_counts().sort_index()
   # Nur Werte ≤ Threshold anzeigen
   filtered_counts = temp_counts[temp_counts.index <= temperature_threshold]
   st.dataframe(filtered_counts)
